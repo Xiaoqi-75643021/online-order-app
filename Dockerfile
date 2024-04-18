@@ -4,6 +4,13 @@ FROM golang:1.22.1 AS builder
 # 设置国内的Golang代理
 ENV GOPROXY=https://goproxy.cn,direct
 
+# 设置mysql数据库的环境变量
+ENV ORDER_DB_HOST=127.0.0.1
+ENV ORDER_DB_NAME=online-ordering-app
+ENV ORDER_DB_PASSWORD=WXP2xiong!
+ENV ORDER_DB_PROT=3306
+ENV ORDER_DB_USER=root
+
 # 工作目录
 WORKDIR /app
 
