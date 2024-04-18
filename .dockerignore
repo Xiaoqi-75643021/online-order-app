@@ -1,12 +1,12 @@
-# 忽略所有本地代码库以外的文件
-**
-
 # 允许 Dockerfile 和 .env 文件
 !Dockerfile
 !.env
 
 # 允许 Go 源代码
 !*.go
+
+# 允许 /cmd 中的文件
+!cmd/
 
 # 允许 Go 模块文件
 !go.mod
