@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"online-ordering-app/internal/config"
+	"online-ordering-app/internal/model"
 	"sync"
 
 	"gorm.io/driver/mysql"
@@ -20,6 +21,9 @@ func Init() *gorm.DB {
 	if err != nil {
 		log.Fatalf("Failed to load database: %v", err)
 	}
+
+	// 自动迁移模型
+	db.AutoMigrate(&model.User{}, &model.Dish{}, &model.Cart{}, &model.CartItem{}, &model.Category{}, &model.Coupon{}, &model.UserCoupon{})
 	return db
 }
 
