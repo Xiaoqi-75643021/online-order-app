@@ -20,13 +20,13 @@ COPY . .
 WORKDIR /app/cmd
 
 # 构建应用程序
-RUN CGO_ENABLED=0 GOOS=linux go build -o online-ordering-app
+RUN CGO_ENABLED=0 GOOS=linux go build -o maidangdang
 
 # 使用scratch作为最终镜像
 FROM scratch
 
 # 从builder镜像中复制构建的可执行文件到scratch镜像中
-COPY --from=builder /app/cmd/online-ordering-app .
+COPY --from=builder /app/cmd/maidangdang .
 
 # 运行应用程序
-CMD ["./online-ordering-app"]
+CMD ["./maidangdang"]
