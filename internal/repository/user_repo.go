@@ -8,13 +8,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// type UserRepository interface {
-// 	CreateUser(user *model.User) error
-// 	FindUserByName(username string) (*model.User, error)
-// 	UpdateUser(user *model.User) error
-// 	DeleteUser(userID uint) error
-// }
-
 // 创建新用户
 func CreateUser(user *model.User) error {
 	return database.DB.Create(user).Error
