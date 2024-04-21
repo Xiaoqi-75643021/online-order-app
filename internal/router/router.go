@@ -29,6 +29,14 @@ func SetupRouter() *gin.Engine {
 			userGroup.POST("/recharge", handler.RechargeBalance)
 			userGroup.POST("/deduct", handler.DeductBalance)
 		}
+
+		// 菜品路由组
+		dishesGroup := apiGroup.Group("/dishes")
+		{
+			dishesGroup.GET("/search", handler.SearchDishes)
+			dishesGroup.GET("/", handler.GetDishesByCategory)
+			dishesGroup.GET("/popular", handler.GetPopularDishes)
+		}
 	}
 
 	return r

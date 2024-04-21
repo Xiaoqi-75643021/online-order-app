@@ -35,8 +35,20 @@ func ListDishes(page, pageSize int) ([]*model.Dish, error) {
 	return dishes, err
 }
 
+func ListPopularDishes() ([]*model.Dish, error) {
+	var dishes[]*model.Dish
+	err := database.DB.Where("is_popular = ?", true).Find(&dishes).Error
+	return dishes, err
+}
+
 func ListDishesByCategory(categoryID uint, page, pageSize int) ([]*model.Dish, error) {
 	var dishes []*model.Dish
 	err := database.DB.Where("category_id = ?", categoryID).Offset((page - 1) * pageSize).Limit(pageSize).Find(&dishes).Error
+	return dishes, err
+}
+
+func ListDishesByKeyword(keyword string, page, pageSize int) ([]*model.Dish, error) {
+	var dishes []*model.Dish
+	err := database.DB.Where("name like ?", "%"+keyword+"%").Offset((page - 1) * pageSize).Limit(pageSize).Find(&dishes).Error
 	return dishes, err
 }
