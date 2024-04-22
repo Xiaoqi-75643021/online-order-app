@@ -8,6 +8,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func GetAllDishes(c *gin.Context) {
+	page := c.DefaultQuery("page", "1")
+	pageSize := c.DefaultQuery("pageSize", "20")
+
+	pageNum, _ := strconv.Atoi(page)
+	pageSizeNum, _ := strconv.Atoi(pageSize)
+
+	dishes, err := service.ListDishes(pageNum, pageSizeNum)
+	if err != nil {
+		Respond(c, http.StatusInternalServerError, 2, "获取菜品失败", gin.H{"error": err.Error()})
+		return
+	}
+
+	Respond(c, http.StatusOK, 0, "获取成功", gin.H{"dishes": dishes})
+}
+
 func SearchDishes(c *gin.Context) {
 	keyword := c.Query("keyword")
 	if keyword == "" {
@@ -16,7 +32,7 @@ func SearchDishes(c *gin.Context) {
 	}
 
 	page := c.DefaultQuery("page", "1")
-	pageSize := c.DefaultQuery("pageSize", "10")
+	pageSize := c.DefaultQuery("pageSize", "20")
 
 	pageNum, _ := strconv.Atoi(page)
 	pageSizeNum, _ := strconv.Atoi(pageSize)
@@ -37,7 +53,7 @@ func GetDishesByCategory(c *gin.Context) {
 		return
 	}
 	page := c.DefaultQuery("page", "1")
-	pageSize := c.DefaultQuery("pageSize", "10")
+	pageSize := c.DefaultQuery("pageSize", "20")
 
 	categoryIdNum, _ := strconv.Atoi(categoryId)
 	pageNum, _ := strconv.Atoi(page)
@@ -46,7 +62,7 @@ func GetDishesByCategory(c *gin.Context) {
 
 	dishes, err := service.GetDishesByCategory(uint(categoryIdNum), pageNum, pageSizeNum)
 	if err != nil {
-		Respond(c, http.StatusInternalServerError, 2, "获取菜品失败", gin.H{"error": err.Error()})
+		Respond(c, http.StatusInternalServerError, 2, "获取分类菜品失败", gin.H{"error": err.Error()})
 		return
 	}
 

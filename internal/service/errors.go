@@ -8,4 +8,6 @@ var (
 	ErrGenerateTokenFailed = errors.New("生成令牌失败")
 	ErrHashPasswordFailed  = errors.New("密码加密失败")
 	ErrInvalidCredentails  = errors.New("用户名或密码错误")
+
+	ErrDishAlreadyExists = errors.New("菜品已存在")
 )

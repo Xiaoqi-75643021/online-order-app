@@ -5,6 +5,28 @@ import (
 	"online-ordering-app/internal/repository"
 )
 
+func CreateDish(name string, price float64, category string) error {
+	_, err := repository.FindDishByName(name)
+	if err != nil {
+		return ErrDishAlreadyExists
+	}
+	categoryStruct, err := repository.FindCategoryByName(category)
+	categoryID := categoryStruct.CategoryID
+	if err != nil {
+		return err
+	}
+	dish := &model.Dish{
+		Name:       name,
+		Price:      price,
+		CategoryID: categoryID,
+	}
+	return repository.CreateDish(dish)
+}
+
+func DeleteDish(id uint) error {
+	return repository.DeleteDish(id)
+}
+
 func SearchDishes(keyword string, page, pageSize int) ([]*model.Dish, error) {
 	return repository.ListDishesByKeyword(keyword, page, pageSize)
 }
@@ -15,4 +37,8 @@ func GetDishesByCategory(categoryId uint, page, pageSize int) ([]*model.Dish, er
 
 func GetPopularDishes() ([]*model.Dish, error) {
 	return repository.ListPopularDishes()
+}
+
+func ListDishes(page, pageSize int) ([]*model.Dish, error) {
+	return repository.ListDishes(page, pageSize)
 }
