@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func UpdateUsername(c *gin.Context) {
+func UpdateAdminName(c *gin.Context) {
 	type request struct {
 		NewUsername string `json:"newUsername" binding:"required"`
 	}
@@ -20,7 +20,7 @@ func UpdateUsername(c *gin.Context) {
 		return
 	}
 	userID, _ := c.Get("userID")
-	err := service.UpdateUsername(userID.(uint), req.NewUsername)
+	err := service.UpdateAdminName(userID.(uint), req.NewUsername)
 	if err != nil {
 		Respond(c, http.StatusInternalServerError, 2, "用户名更新失败", gin.H{"error": err.Error()})
 		return
@@ -29,7 +29,7 @@ func UpdateUsername(c *gin.Context) {
 	Respond(c, http.StatusOK, 0, "用户名更新成功", nil)
 }
 
-func UpdatePassword(c *gin.Context) {
+func UpdateAdminPassword(c *gin.Context) {
 	type request struct {
 		NewPassword string `json:"newPassword" binding:"required"`
 	}
@@ -43,7 +43,7 @@ func UpdatePassword(c *gin.Context) {
 	}
 
 	userID, _ := c.Get("userID")
-	err := service.UpdatePassword(userID.(uint), req.NewPassword)
+	err := service.UpdateAdminPassword(userID.(uint), req.NewPassword)
 	if err != nil {
 		Respond(c, http.StatusInternalServerError, 2, "密码更新失败", gin.H{"error": err.Error()})
 		return
@@ -52,10 +52,3 @@ func UpdatePassword(c *gin.Context) {
 	Respond(c, http.StatusOK, 0, "密码更新成功", nil)
 }
 
-func RechargeBalance(c *gin.Context) {
-
-}
-
-func DeductBalance(c *gin.Context) {
-
-}

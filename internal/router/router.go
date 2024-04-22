@@ -25,7 +25,7 @@ func SetupRouter() *gin.Engine {
 		userGroup.Use(middleware.AuthMiddleware())
 		{
 			userGroup.PUT("/username", handler.UpdateUsername)
-			userGroup.PUT("/password", handler.Updatepassword)
+			userGroup.PUT("/password", handler.UpdatePassword)
 			userGroup.POST("/recharge", handler.RechargeBalance)
 			userGroup.POST("/deduct", handler.DeductBalance)
 		}

@@ -8,7 +8,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// 创建新用户
 func CreateUser(user *model.User) error {
 	return database.DB.Create(user).Error
 }

@@ -17,7 +17,7 @@ func UpdateUsername(userID uint, newUsername string) error {
 	return repository.UpdateUser(user)
 }
 
-func Updatepassword(userID uint, newPassword string) error {
+func UpdatePassword(userID uint, newPassword string) error {
 	user, err := repository.FindUserByID(userID)
 	if err != nil {
 		return err

@@ -51,3 +51,48 @@ func Register(username, password string) (string, error) {
 	}
 	return token, nil
 }
+
+func LoginAdmin(name, password string) (string, error) {
+	authenticated, err := repository.AuthenticateAdmin(name, password)
+	if err != nil {
+		return "", err
+	}
+	if !authenticated {
+		return "", ErrInvalidCredentails
+	}
+
+	admin, err := repository.FindAdminByName(name)
+	if err != nil {
+		return "", err
+	}
+	token, err := jwt.GenerateToken(admin.AdminID)
+	if err != nil {
+		return "", err
+	}
+	return token, nil
+}
+
+func RegisterAdmin(name, password string) (string, error) {
+	_, err := repository.FindAdminByName(name)
+	if err == nil {
+		return "", ErrUserAlreadyExists
+	}
+	hashedPassword, err := utils.HashPassword(password)
+	if err != nil {
+		return "", ErrHashPasswordFailed
+	}
+
+	admin := &model.Admin{
+		Name: name,
+		Password: hashedPassword,
+	}
+	err = repository.CreateAdmin(admin)
+	if err != nil {
+		return "", ErrCreateUserFailed
+	}
+	token, err := jwt.GenerateToken(admin.AdminID)
+	if err != nil {
+		return "", ErrGenerateTokenFailed
+	}
+	return token, nil
+}
