@@ -30,6 +30,15 @@ func SetupRouter() *gin.Engine {
 			userGroup.POST("/deduct", handler.DeductBalance)
 		}
 
+		// 管理员路由组
+		adminGroup := apiGroup.Group("/admin")
+		{
+			adminGroup.POST("/login", handler.LoginAdmin)
+			adminGroup.POST("/register", handler.RegisterAdmin)
+			adminGroup.PUT("/username", handler.UpdateAdminName)
+			adminGroup.PUT("/password", handler.UpdateAdminPassword)
+		}
+
 		// 菜品路由组
 		dishesGroup := apiGroup.Group("/dishes")
 		{
@@ -37,6 +46,8 @@ func SetupRouter() *gin.Engine {
 			dishesGroup.GET("/search", handler.SearchDishes)
 			dishesGroup.GET("/category", handler.GetDishesByCategory)
 			dishesGroup.GET("/popular", handler.GetPopularDishes)
+			dishesGroup.POST("/add", handler.AddDish)
+			dishesGroup.DELETE("/delete", handler.RemoveDish)
 		}
 	}
 
