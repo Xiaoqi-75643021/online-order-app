@@ -80,7 +80,6 @@ func GetPopularDishes(c *gin.Context) {
 }
 
 func UpdateDish(c *gin.Context) {
-	// Dish字段：Name string	Description string	Price float64	Category string	Ispopular bool
 	var dishUpdate map[string]any
 	if err := c.BindJSON(&dishUpdate); err != nil {
 		Respond(c, http.StatusBadRequest, 1, "参数错误", gin.H{"error": err.Error()})
