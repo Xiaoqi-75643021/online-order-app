@@ -78,3 +78,21 @@ func GetPopularDishes(c *gin.Context) {
 
 	Respond(c, http.StatusOK, 0, "获取成功", gin.H{"dishes": dishes})
 }
+
+func UpdateDish(c *gin.Context) {
+	// Dish字段：Name string	Description string	Price float64	Category string	Ispopular bool
+	var dishUpdate map[string]any
+	if err := c.BindJSON(&dishUpdate); err != nil {
+		Respond(c, http.StatusBadRequest, 1, "参数错误", gin.H{"error": err.Error()})
+		return
+	}
+	dishID := c.Param("id")
+	dishIDNum, _ := strconv.Atoi(dishID)
+	err := service.UpdateDish(uint(dishIDNum), dishUpdate)
+	if err != nil {
+		Respond(c, http.StatusInternalServerError, 2, "菜品更新失败", gin.H{"error": err.Error()})
+		return
+	}
+
+	Respond(c, http.StatusOK, 0, "更新成功", nil)
+}
