@@ -18,5 +18,5 @@
 Dockerfile.*
 README.md
 LICENSE
-*.test
+*_test.go
 *.md
