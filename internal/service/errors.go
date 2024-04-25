@@ -10,4 +10,6 @@ var (
 	ErrInvalidCredentails  = errors.New("用户名或密码错误")
 
 	ErrDishAlreadyExists = errors.New("菜品已存在")
+
+	ErrCategoryAlreadyExists = errors.New("分类已存在")
 )

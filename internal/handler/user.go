@@ -12,14 +12,14 @@ func UpdateUsername(c *gin.Context) {
 		NewUsername string `json:"newUsername" binding:"required"`
 	}
 	var req request
-	if err := c.ShouldBind(&req); err != nil {
+	if err := c.ShouldBindJSON(&req); err != nil {
 		Respond(c, http.StatusBadRequest, 1, "请求参数错误", gin.H{
-			"field": "username",
+			"field": "newUsername",
 			"error": err.Error(),
 		})
 		return
 	}
-	userID, _ := c.Get("userID")
+	userID, _ := c.Get("user_id")
 	err := service.UpdateUsername(userID.(uint), req.NewUsername)
 	if err != nil {
 		Respond(c, http.StatusInternalServerError, 2, "用户名更新失败", gin.H{"error": err.Error()})
@@ -36,13 +36,13 @@ func UpdatePassword(c *gin.Context) {
 	var req request
 	if err := c.ShouldBindJSON(&req); err != nil {
 		Respond(c, http.StatusBadRequest, 1, "请求参数错误", gin.H{
-			"field": "password",
+			"field": "newPassword",
 			"error": err.Error(),
 		})
 		return
 	}
 
-	userID, _ := c.Get("userID")
+	userID, _ := c.Get("user_id")
 	err := service.UpdatePassword(userID.(uint), req.NewPassword)
 	if err != nil {
 		Respond(c, http.StatusInternalServerError, 2, "密码更新失败", gin.H{"error": err.Error()})

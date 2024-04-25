@@ -31,12 +31,14 @@ func DeleteCategory(id uint) error {
 
 func ListCategories(page, pageSize int) ([]*model.Category, error) {
 	var categories []*model.Category
-	err := database.DB.Offset((page - 1) * pageSize).Limit(pageSize).Find(&categories).Error
+	err := database.DB.Offset((page - 1) * pageSize).Limit(pageSize).
+		Find(&categories).Error
 	return categories, err
 }
 
 func ListSubCategories(parentID uint, page, pageSize int) ([]*model.Category, error) {
 	var subCategories []*model.Category
-	err := database.DB.Where("parent_id = ?", parentID).Offset((page - 1) * pageSize).Limit(pageSize).Find(&subCategories).Error
+	err := database.DB.Where("parent_id = ?", parentID).Offset((page - 1) * pageSize).Limit(pageSize).
+		Find(&subCategories).Error
 	return subCategories, err
 }

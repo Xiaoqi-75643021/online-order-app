@@ -7,24 +7,27 @@ import (
 	"testing"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt"
+
 )
 
 var jwtSecret = []byte(config.Cfg.Jwt.Key)
 
 type Claims struct {
-	UserID uint `json:"userid"`
+	UserID uint `json:"user_id"`
+	Role string `json:"role"`
 	jwt.StandardClaims
 }
 
 func TestGenerateToken(t *testing.T) {
 	expirationTime := time.Now().Add(24 * time.Hour)
-	user, err := repository.FindUserByName("mike")
+	user, err := repository.FindUserByName("Mike")
 	if err != nil {
 		t.Fatal(err)
 	}
 	claims := &Claims{
 		UserID: user.UserID,
+		Role: user.Role,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 		},
@@ -39,7 +42,7 @@ func TestGenerateToken(t *testing.T) {
 }
 
 func TestParseToken(t *testing.T) {
-	tokenString := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOjMsImV4cCI6MTcxMjIxNTAxMn0.Tdx6b6XL3Ec8FZUuPwYMH76nvyM3hNzM_hP6QPkzoxg"
+	tokenString := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo1LCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3MTQxMTU0ODR9.HlgOViVJsRRC2IlcumR_-ObGaAzXFHzOEAnt3CZzNNc"
 	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(t *jwt.Token) (interface{}, error) {
 		return jwtSecret, nil
 	})

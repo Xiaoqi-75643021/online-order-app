@@ -9,7 +9,7 @@ import (
 
 func CreateDish(name string, price float64, category string) error {
 	_, err := repository.FindDishByName(name)
-	if err != nil {
+	if err == nil {
 		return ErrDishAlreadyExists
 	}
 	categoryStruct, err := repository.FindCategoryByName(category)
@@ -46,6 +46,11 @@ func UpdateDish(dishID uint, dishUpdate map[string]any) error {
 	}
 
 	err = decoder.Decode(dishUpdate)
+	if err != nil {
+		return err
+	}
+
+	err = repository.UpdateDish(dish)
 	if err != nil {
 		return err
 	}

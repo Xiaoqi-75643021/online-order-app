@@ -19,6 +19,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		parts := strings.SplitN(authHeader, " ", 2)
+		
 		if !(len(parts) == 2 && parts[0] == "Bearer") {
 			handler.Respond(c, http.StatusUnauthorized, 6, "Authorization格式错误", nil)
 			c.Abort()
@@ -26,13 +27,15 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		claims, err := jwt.ParseToken(parts[1])
+
 		if err != nil {
 			handler.Respond(c, http.StatusUnauthorized, 7, "token无效", nil)
 			c.Abort()
 			return
 		}
 
-		c.Set("userID", claims.UserID)
+		c.Set("user_id", claims.UserID)
+		c.Set("role", claims.Role)
 		
 		c.Next()
 	}

@@ -8,6 +8,44 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func AddDish(c *gin.Context) {
+	type request struct {
+		Name     string  `json:"name" binding:"required"`
+		Price    float64 `json:"price" binding:"required"`
+		Catetory string  `json:"category" binding:"required"`
+	}
+	var req request
+	if err := c.ShouldBindJSON(&req); err != nil {
+		Respond(c, http.StatusBadRequest, 1, "请求参数错误", gin.H{"error": err.Error()})
+		return
+	}
+	err := service.CreateDish(req.Name, req.Price, req.Catetory)
+	if err != nil {
+		Respond(c, http.StatusInternalServerError, 2, "菜品添加失败", gin.H{"error": err.Error()})
+		return
+	}
+	Respond(c, http.StatusOK, 0, "菜品添加成功", nil)
+}
+
+func RemoveDish(c *gin.Context) {
+	type request struct {
+		ID uint `json:"id" binding:"required"`
+	}
+	var req request
+	if err := c.ShouldBindJSON(&req); err != nil {
+		Respond(c, http.StatusBadRequest, 1, "请求参数错误", gin.H{"error": err.Error()})
+		return
+	}
+	err := service.DeleteDish(req.ID)
+	if err != nil {
+		Respond(c, http.StatusInternalServerError, 2, "菜品删除失败", gin.H{"error": err.Error()})
+		return
+	}
+	Respond(c, http.StatusOK, 0, "菜品删除成功", nil)
+
+}
+
+
 func GetAllDishes(c *gin.Context) {
 	page := c.DefaultQuery("page", "1")
 	pageSize := c.DefaultQuery("pageSize", "20")
@@ -21,7 +59,24 @@ func GetAllDishes(c *gin.Context) {
 		return
 	}
 
-	Respond(c, http.StatusOK, 0, "获取成功", gin.H{"dishes": dishes})
+	Respond(c, http.StatusOK, 0, "菜品获取成功", gin.H{"dishes": dishes})
+}
+
+func UpdateDish(c *gin.Context) {
+	var dishUpdate map[string]any
+	if err := c.BindJSON(&dishUpdate); err != nil {
+		Respond(c, http.StatusBadRequest, 1, "参数错误", gin.H{"error": err.Error()})
+		return
+	}
+	dishID := c.Param("id")
+	dishIDNum, _ := strconv.Atoi(dishID)
+	err := service.UpdateDish(uint(dishIDNum), dishUpdate)
+	if err != nil {
+		Respond(c, http.StatusInternalServerError, 2, "菜品更新失败", gin.H{"error": err.Error()})
+		return
+	}
+
+	Respond(c, http.StatusOK, 0, "更新成功", nil)
 }
 
 func SearchDishes(c *gin.Context) {
@@ -66,7 +121,7 @@ func GetDishesByCategory(c *gin.Context) {
 		return
 	}
 
-	Respond(c, http.StatusOK, 0, "获取成功", gin.H{"dishes": dishes})
+	Respond(c, http.StatusOK, 0, "获取分类菜品成功", gin.H{"dishes": dishes})
 }
 
 func GetPopularDishes(c *gin.Context) {
@@ -76,22 +131,5 @@ func GetPopularDishes(c *gin.Context) {
 		return
 	}
 
-	Respond(c, http.StatusOK, 0, "获取成功", gin.H{"dishes": dishes})
-}
-
-func UpdateDish(c *gin.Context) {
-	var dishUpdate map[string]any
-	if err := c.BindJSON(&dishUpdate); err != nil {
-		Respond(c, http.StatusBadRequest, 1, "参数错误", gin.H{"error": err.Error()})
-		return
-	}
-	dishID := c.Param("id")
-	dishIDNum, _ := strconv.Atoi(dishID)
-	err := service.UpdateDish(uint(dishIDNum), dishUpdate)
-	if err != nil {
-		Respond(c, http.StatusInternalServerError, 2, "菜品更新失败", gin.H{"error": err.Error()})
-		return
-	}
-
-	Respond(c, http.StatusOK, 0, "更新成功", nil)
+	Respond(c, http.StatusOK, 0, "获取热门菜品成功", gin.H{"dishes": dishes})
 }
