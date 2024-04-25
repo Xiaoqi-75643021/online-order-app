@@ -4,20 +4,23 @@ import (
 	"online-ordering-app/internal/config"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt"
+
 )
 
 var jwtSecret = []byte(config.Cfg.Jwt.Key)
 
 type Claims struct {
-	UserID uint `json:"userid"`
+	UserID uint `json:"user_id"`
+	Role string `json:"role"`
 	jwt.StandardClaims
 }
 
-func GenerateToken(userID uint) (string, error) {
+func GenerateToken(userID uint, role string) (string, error) {
 	expirationTime := time.Now().Add(24 * time.Hour)
 	claims := &Claims{
 		UserID: userID,
+		Role: role,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 		},
