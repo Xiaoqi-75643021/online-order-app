@@ -19,7 +19,7 @@ func AddDish(c *gin.Context) {
 		Respond(c, http.StatusBadRequest, 1, "请求参数错误", gin.H{"error": err.Error()})
 		return
 	}
-	err := service.CreateDish(req.Name, req.Price, req.Catetory)
+	err := service.AddDish(req.Name, req.Price, req.Catetory)
 	if err != nil {
 		Respond(c, http.StatusInternalServerError, 2, "菜品添加失败", gin.H{"error": err.Error()})
 		return
@@ -102,7 +102,7 @@ func SearchDishes(c *gin.Context) {
 }
 
 func GetDishesByCategory(c *gin.Context) {
-	categoryId := c.Query("categoryId")
+	categoryId := c.Query("category_id")
 	if categoryId == "" {
 		Respond(c, http.StatusBadRequest, 1, "分类ID不能为空", nil)
 		return

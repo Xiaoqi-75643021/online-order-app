@@ -48,6 +48,16 @@ func SetupRouter() *gin.Engine {
 		categoryGroup.GET("/list", handler.GetAllCategories)
 	}
 
+	// 购物车路由组
+	cartGroup := apiGroup.Group("/cart")
+	cartGroup.Use(middleware.AuthMiddleware())
+	{
+		cartGroup.POST("/add", handler.AddItemToCart)
+		cartGroup.DELETE("delete", handler.RemoveItemFromCart)
+
+		cartGroup.GET("/list", handler.GetCartInfo)
+	}
+
 	// 管理员路由组
 	adminGroup := apiGroup.Group("/admin")
 	adminGroup.Use(middleware.AuthMiddleware())

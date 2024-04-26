@@ -7,7 +7,7 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-func CreateDish(name string, price float64, category string) error {
+func AddDish(name string, price float64, category string) error {
 	_, err := repository.FindDishByName(name)
 	if err == nil {
 		return ErrDishAlreadyExists

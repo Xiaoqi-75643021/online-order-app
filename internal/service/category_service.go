@@ -5,7 +5,7 @@ import (
 	"online-ordering-app/internal/repository"
 )
 
-func CreateCategory(categoryName string, parentID *uint) error {
+func Addategory(categoryName string, parentID *uint) error {
 	_, err := repository.FindCategoryByName(categoryName)
 	if err == nil {
 		return ErrCategoryAlreadyExists
@@ -17,7 +17,7 @@ func CreateCategory(categoryName string, parentID *uint) error {
 	return repository.CreateCategory(category)
 }
 
-func DeleteCategory(categoryID uint) error {
+func RemoveCategory(categoryID uint) error {
 	return repository.DeleteCategory(categoryID)
 }
 

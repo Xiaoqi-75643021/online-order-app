@@ -21,10 +21,47 @@ func FindCartByUserID(userID uint) (*model.Cart, error) {
 	return cart, err
 }
 
-func UpdateCart(cart *model.Cart) error {
-	return database.DB.Save(cart).Error
+func DeleteCart(id uint) error {
+	tx := database.DB.Begin()
+
+	if err := tx.Where("cart_id = ?", id).Delete(&model.CartItem{}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if err := tx.Delete(&model.Cart{}, id).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit().Error
 }
 
-func DeleteCart(id uint) error {
-	return database.DB.Delete(&model.Cart{}, id).Error
+func SaveCartItem(cartItem *model.CartItem) error {
+	return database.DB.Save(cartItem).Error
+}
+
+func FindCartItemByCartIDAndDishID(cartID, dishID uint) (*model.CartItem, error) {
+	cartItem := new(model.CartItem)
+	err := database.DB.Where("cart_id = ? and dish_id = ?", cartID, dishID).First(&cartItem).Error
+	return cartItem, err
+}
+
+func DeleteCartItem(cartItemID uint) error {
+	if err := database.DB.Delete(&model.CartItem{}, cartItemID).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func CountCartItems(cartID uint) (int64, error) {
+	var count int64
+	database.DB.Model(&model.CartItem{}).Where("cart_id = ?", cartID).Count(&count)
+	return count, nil
+}
+
+func ListCartItemsByCartID(cartID uint) ([]*model.CartItem, error) {
+	var cartItems []*model.CartItem
+	err := database.DB.Where("cart_id = ?", cartID).Find(&cartItems).Error
+	return cartItems, err
 }

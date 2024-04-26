@@ -18,7 +18,7 @@ func AddCategory(c *gin.Context) {
 		Respond(c, http.StatusBadRequest, 1, "请求参数错误", gin.H{"error": err.Error()})
 		return
 	}
-	err := service.CreateCategory(req.Catetory, req.ParentID)
+	err := service.Addategory(req.Catetory, req.ParentID)
 	if err != nil {
 		Respond(c, http.StatusInternalServerError, 2, "分类添加失败", gin.H{"error": err.Error()})
 		return
@@ -35,7 +35,7 @@ func RemoveCategory(c *gin.Context) {
 		Respond(c, http.StatusBadRequest, 1, "请求参数错误", gin.H{"error": err.Error()})
 		return
 	}
-	err := service.DeleteCategory(req.ID)
+	err := service.RemoveCategory(req.ID)
 	if err != nil {
 		Respond(c, http.StatusInternalServerError, 2, "分类删除失败", gin.H{"error": err.Error()})
 		return
