@@ -10,9 +10,6 @@ import (
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
 
-	// 通用中间件
-	// r.Use(middleware.CommonMiddleware())
-
 	// 接口路由
 	apiGroup := r.Group("/api")
 

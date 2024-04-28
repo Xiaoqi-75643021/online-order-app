@@ -29,3 +29,23 @@ func UpdatePassword(userID uint, newPassword string) error {
 	user.Password = hashedPassword
 	return repository.UpdateUser(user)
 }
+
+func RechargeUserBalance(userID uint, amount float64) error {
+	user, err := repository.FindUserByID(userID)
+	if err != nil {
+		return err
+	}
+	user.Balance += amount
+	
+	return repository.UpdateUser(user)
+}
+
+func DeductUserBalance(userID uint, amount float64) error {
+	user, err := repository.FindUserByID(userID)
+	if err != nil {
+		return err
+	}
+	user.Balance -= amount
+
+	return repository.UpdateUser(user)
+}

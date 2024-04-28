@@ -53,9 +53,45 @@ func UpdatePassword(c *gin.Context) {
 }
 
 func RechargeBalance(c *gin.Context) {
+	type request struct {
+		Amount float64 `json:"amount" binding:"required"`
+	}
+	var req request
+	if err := c.ShouldBindJSON(&req); err != nil {
+		Respond(c, http.StatusBadRequest, 1, "请求参数错误", gin.H{
+			"field": "amount",
+			"error": err.Error(),
+		})
+		return
+	}
+	userID, _ := c.Get("user_id")
+	err := service.RechargeUserBalance(userID.(uint), req.Amount)
+	if err != nil {
+		Respond(c, http.StatusInternalServerError, 2, "充值失败", gin.H{"error": err.Error()})
+		return
+	}
 
+	Respond(c, http.StatusOK, 0, "充值成功", nil)
 }
 
 func DeductBalance(c *gin.Context) {
+	type request struct {
+		Amount float64 `json:"amount" binding:"required"`
+	}
+	var req request
+	if err := c.ShouldBindJSON(&req); err != nil {
+		Respond(c, http.StatusBadRequest, 1, "请求参数错误", gin.H{
+			"field": "amount",
+			"error": err.Error(),
+		})
+		return
+	}
+	userID, _ := c.Get("user_id")
+	err := service.DeductUserBalance(userID.(uint), req.Amount)
+	if err != nil {
+		Respond(c, http.StatusInternalServerError, 2, "扣款失败", gin.H{"error": err.Error()})
+		return
+	}
 
+	Respond(c, http.StatusOK, 0, "扣款成功", nil)
 }
