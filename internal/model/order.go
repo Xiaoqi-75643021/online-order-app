@@ -14,3 +14,15 @@ type Order struct {
 func (*Order) TableName() string {
 	return "order"
 }
+
+type OrderItem struct {
+	OrderItemID uint   `gorm:"column:id;primaryKey;autoIncrement"` // 订单项ID
+	OrderID     uint   `gorm:"column:order_id;index"`              // 订单ID
+	DishID      uint   `gorm:"column:dish_id;index"`               // 菜品ID，索引
+	Quantity    int    `gorm:"column:quantity;type:int"`           // 菜品数量
+	Note        string `gorm:"column:note;type:text"`              // 备注(不加辣，不要酸黄瓜...)
+}
+
+func (*OrderItem) TableName() string {
+	return "order_item"
+}

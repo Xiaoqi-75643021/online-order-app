@@ -3,10 +3,12 @@ package repository
 import (
 	"online-ordering-app/internal/database"
 	"online-ordering-app/internal/model"
+
+	"gorm.io/gorm"
 )
 
-func CreateCart(cart *model.Cart) error {
-	return database.DB.Create(cart).Error
+func CreateCart(tx *gorm.DB, cart *model.Cart) error {
+	return tx.Create(cart).Error
 }
 
 func FindCartByID(cartID uint) (*model.Cart, error) {
@@ -21,24 +23,18 @@ func FindCartByUserID(userID uint) (*model.Cart, error) {
 	return cart, err
 }
 
-func DeleteCart(id uint) error {
-	tx := database.DB.Begin()
-
+func DeleteCart(tx *gorm.DB, id uint) error {
 	if err := tx.Where("cart_id = ?", id).Delete(&model.CartItem{}).Error; err != nil {
-		tx.Rollback()
 		return err
 	}
-
 	if err := tx.Delete(&model.Cart{}, id).Error; err != nil {
-		tx.Rollback()
 		return err
 	}
-
-	return tx.Commit().Error
+	return nil
 }
 
-func SaveCartItem(cartItem *model.CartItem) error {
-	return database.DB.Save(cartItem).Error
+func SaveCartItem(tx *gorm.DB, cartItem *model.CartItem) error {
+	return tx.Save(cartItem).Error
 }
 
 func FindCartItemByCartIDAndDishID(cartID, dishID uint) (*model.CartItem, error) {
