@@ -14,3 +14,9 @@ type Order struct {
 func (*Order) TableName() string {
 	return "order"
 }
+
+type OrderItem struct {
+	OrderItemID uint `gorm:"column:id;primaryKey;autoIncrement"`
+	OrderID uint `gorm:"column:order_id;index"`
+	gorm.Model
+}
