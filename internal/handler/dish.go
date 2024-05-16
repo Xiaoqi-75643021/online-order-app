@@ -42,7 +42,24 @@ func RemoveDish(c *gin.Context) {
 		return
 	}
 	Respond(c, http.StatusOK, 0, "菜品删除成功", nil)
+}
 
+func QueryDishInfoById(c *gin.Context) {
+	dishId := c.Query("id")
+	if dishId == "" {
+		Respond(c, http.StatusBadRequest, 1, "请求参数错误", nil)
+		return
+	}
+
+	dishIdNum, _ := strconv.Atoi(dishId)
+
+	dish, err := service.GetDishInfo(dishIdNum)
+	if err != nil {
+		Respond(c, http.StatusInternalServerError, 2, "获取菜品详情失败", gin.H{"error": err.Error()})
+		return
+	}
+
+	Respond(c, http.StatusOK, 0, "获取详情成功", gin.H{"dishInfo": dish})
 }
 
 

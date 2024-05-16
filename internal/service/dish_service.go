@@ -58,6 +58,10 @@ func UpdateDish(dishID uint, dishUpdate map[string]any) error {
 	return nil
 }
 
+func GetDishInfo(dishId int) (*model.Dish, error) {
+	return repository.FindDishByID(uint(dishId))
+}
+
 func SearchDishes(keyword string, page, pageSize int) ([]*model.Dish, error) {
 	return repository.ListDishesByKeyword(keyword, page, pageSize)
 }
