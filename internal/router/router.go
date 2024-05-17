@@ -45,7 +45,7 @@ func SetupRouter() *gin.Engine {
 	dishesGroup := apiGroup.Group("/dish")
 	{
 		dishesGroup.GET("/list", handler.GetAllDishes)
-		dishesGroup.GET("/search", handler.SearchDishes)
+		dishesGroup.GET("/search", handler.QueryDishInfoByKeyword)
 		dishesGroup.GET("/category", handler.GetDishesByCategory)
 		dishesGroup.GET("/popular", handler.GetPopularDishes)
 		dishesGroup.GET("/info", handler.QueryDishInfoById)
@@ -62,7 +62,8 @@ func SetupRouter() *gin.Engine {
 	cartGroup.Use(middleware.AuthMiddleware())
 	{
 		cartGroup.POST("/add", handler.AddItemToCart)
-		cartGroup.DELETE("delete", handler.RemoveItemFromCart)
+		cartGroup.DELETE("/delete", handler.RemoveItemFromCart)
+		cartGroup.DELETE("/clear", handler.ClearCart)
 
 		cartGroup.GET("/list", handler.GetCartInfo)
 	}

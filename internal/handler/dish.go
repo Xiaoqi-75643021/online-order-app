@@ -96,7 +96,7 @@ func UpdateDish(c *gin.Context) {
 	Respond(c, http.StatusOK, 0, "更新成功", nil)
 }
 
-func SearchDishes(c *gin.Context) {
+func QueryDishInfoByKeyword(c *gin.Context) {
 	keyword := c.Query("keyword")
 	if keyword == "" {
 		Respond(c, http.StatusBadRequest, 1, "搜索关键词不能为空", nil)
