@@ -32,7 +32,7 @@ func AddItemToCart(c *gin.Context) {
 
 func RemoveItemFromCart(c *gin.Context) {
 	type request struct {
-		CartID uint `json:"cart_id" binding:"reuqired"`
+		CartID uint `json:"cart_id" binding:"required"`
 		DishID uint `json:"dish_id" binding:"required"`
 	}
 	var req request
