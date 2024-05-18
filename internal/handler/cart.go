@@ -90,5 +90,5 @@ func GetCartInfo(c *gin.Context) {
 		return
 	}
 
-	Respond(c, http.StatusInternalServerError, 2, "获取购物详情成功", gin.H{"cartItems": cartItems})
+	Respond(c, http.StatusOK, 2, "获取购物详情成功", gin.H{"cartItems": cartItems})
 }

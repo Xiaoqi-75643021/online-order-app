@@ -65,7 +65,7 @@ func SetupRouter() *gin.Engine {
 		cartGroup.DELETE("/delete", handler.RemoveItemFromCart)
 		cartGroup.DELETE("/clear", handler.ClearCart)
 
-		cartGroup.GET("/list", handler.GetCartInfo)
+		cartGroup.GET("/info", handler.GetCartInfo)
 	}
 
 	// 管理员路由组
