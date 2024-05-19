@@ -1,5 +1,5 @@
 # 使用官方Go镜像作为构建环境
-FROM golang:1.22.1 AS builder
+FROM golang:1.22.3 AS builder
 
 # 设置国内的Golang代理
 ENV GOPROXY=https://goproxy.cn,direct
