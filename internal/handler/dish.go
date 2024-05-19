@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"online-ordering-app/internal/service"
 	"os"
@@ -163,7 +162,6 @@ func QueryDishImageById(c *gin.Context) {
 	}
 	
 	imagePath := filepath.Join("assets\\dish", dishId + ".jpg")
-	fmt.Println(imagePath)
 
 	if _, err := os.Stat(imagePath); os.IsNotExist(err) {
 		Respond(c, http.StatusNotFound, 2, "图片不存在", nil)

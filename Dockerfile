@@ -28,5 +28,8 @@ FROM scratch
 # 从builder镜像中复制构建的可执行文件到scratch镜像中
 COPY --from=builder /app/cmd/maidangdang .
 
+# 复制assets文件夹到最终镜像
+COPY --from=builder /app/assets /assets
+
 # 运行应用程序
 CMD ["./maidangdang"]
