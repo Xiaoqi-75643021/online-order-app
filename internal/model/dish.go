@@ -9,6 +9,7 @@ type Dish struct {
 	Price       float64 `gorm:"column:price;type:decimal(10,2)"`           // 菜品价格
 	CategoryID  uint    `gorm:"column:category_id;index"`                  // 分类ID，索引
 	IsPopular   bool    `gorm:"column:is_popular;default:false"`           // 是否为热门菜品，默认为false
+	ImageName   string  `gorm:"column:image_name;type:varchar(255)"`       // 图片名称
 	gorm.Model
 }
 

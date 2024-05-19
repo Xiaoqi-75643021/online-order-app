@@ -21,6 +21,8 @@ func SetupRouter() *gin.Engine {
 		MaxAge: 12 * time.Hour,
 	}))
 
+	r.Static("/assets", "./assets")
+
 	// 接口路由
 	apiGroup := r.Group("/api")
 
@@ -49,6 +51,7 @@ func SetupRouter() *gin.Engine {
 		dishesGroup.GET("/category", handler.GetDishesByCategory)
 		dishesGroup.GET("/popular", handler.GetPopularDishes)
 		dishesGroup.GET("/info", handler.QueryDishInfoById)
+		dishesGroup.GET("/image", handler.QueryDishImageById)
 	}
 
 	// 分类路由组（对外）

@@ -1,8 +1,11 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"online-ordering-app/internal/service"
+	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -149,4 +152,24 @@ func GetPopularDishes(c *gin.Context) {
 	}
 
 	Respond(c, http.StatusOK, 0, "获取热门菜品成功", gin.H{"dishes": dishes})
+}
+
+func QueryDishImageById(c *gin.Context) {
+	dishId := c.Query("id")
+
+	if dishId == "" {
+		Respond(c, http.StatusBadRequest, 1, "请求参数错误", nil)
+		return
+	}
+	
+	imagePath := filepath.Join("assets\\dish", dishId + ".jpg")
+	fmt.Println(imagePath)
+
+	if _, err := os.Stat(imagePath); os.IsNotExist(err) {
+		Respond(c, http.StatusNotFound, 2, "图片不存在", nil)
+		return
+	}
+
+
+	c.File(imagePath)
 }
