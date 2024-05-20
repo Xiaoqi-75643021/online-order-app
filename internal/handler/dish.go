@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/base64"
 	"net/http"
 	"online-ordering-app/internal/service"
 	"os"
@@ -161,13 +162,20 @@ func QueryDishImageById(c *gin.Context) {
 		return
 	}
 	
-	imagePath := filepath.Join("assets\\dish", dishId + ".jpg")
+	imagePath := filepath.Join("assets", "dish", dishId + ".jpg")
 
 	if _, err := os.Stat(imagePath); os.IsNotExist(err) {
 		Respond(c, http.StatusNotFound, 2, "图片不存在", nil)
 		return
 	}
 
+	imageData, err := os.ReadFile(imagePath)
+	if err != nil {
+		Respond(c, http.StatusInternalServerError, 2, "读取图片失败", nil)
+		return
+	}
 
-	c.File(imagePath)
+	base64Image := base64.StdEncoding.EncodeToString(imageData)
+
+	Respond(c, http.StatusOK, 0, "获取菜品图片成功", gin.H{"image": base64Image})
 }
