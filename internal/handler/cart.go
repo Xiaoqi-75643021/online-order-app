@@ -32,7 +32,7 @@ func AddItemToCart(c *gin.Context) {
 
 func RemoveItemFromCart(c *gin.Context) {
 	type request struct {
-		CartID uint `json:"cart_id" binding:"required"`
+		CartID     uint `json:"cart_id" binding:"required"`
 		DishID uint `json:"dish_id" binding:"required"`
 	}
 	var req request
@@ -41,15 +41,13 @@ func RemoveItemFromCart(c *gin.Context) {
 		return
 	}
 
-	err := service.RemoveFromCart(req.CartID, req.DishID)
+	err := service.RemoveDishFromCartItem(req.CartID, req.DishID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Dish removed from cart successfully"})
-
-	Respond(c, http.StatusOK, 0, "添加详情成功", nil)
+	Respond(c, http.StatusOK, 0, "购物车删除菜品成功", nil)
 }
 
 func ClearCart(c *gin.Context) {

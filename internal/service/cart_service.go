@@ -64,14 +64,25 @@ func AddToCart(userID, dishID uint) (int, error) {
 	return int(cart.CartID), tx.Commit().Error
 }
 
-func RemoveFromCart(userID, cartItemID uint) error {
-	cart, err := repository.FindCartByUserID(userID)
+func RemoveDishFromCartItem(cartID, dishID uint) error {
+	cart, err := repository.FindCartByID(cartID)
 	if err != nil {
 		return err
 	}
 
-	if err := repository.DeleteCartItem(cartItemID); err != nil {
+	cartItem, err := repository.FindCartItemByCartIDAndDishID(cartID, dishID); if err != nil {
 		return err
+	}
+
+	if cartItem.Quantity == 1 {
+		if err := repository.DeleteCartItem(cartItem.CartItemID); err != nil {
+			return err
+		}
+	} else {
+		cartItem.Quantity -= 1
+		if err := repository.UpdateCartItem(cartItem); err != nil {
+			return err
+		}
 	}
 
 	count, err := repository.CountCartItems(cart.CartID)

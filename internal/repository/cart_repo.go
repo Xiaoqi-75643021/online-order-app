@@ -37,6 +37,10 @@ func SaveCartItem(tx *gorm.DB, cartItem *model.CartItem) error {
 	return tx.Save(cartItem).Error
 }
 
+func UpdateCartItem(cartItem *model.CartItem) error {
+	return database.DB.Save(cartItem).Error
+}
+
 func FindCartItemByCartIDAndDishID(cartID, dishID uint) (*model.CartItem, error) {
 	cartItem := new(model.CartItem)
 	err := database.DB.Where("cart_id = ? and dish_id = ?", cartID, dishID).First(&cartItem).Error
