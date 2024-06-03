@@ -43,6 +43,13 @@ func SetupRouter() *gin.Engine {
 		userGroup.POST("/deduct", handler.DeductBalance)
 	}
 
+	// 订单路由组（对外）
+	orderGroup := apiGroup.Group("/order")
+	orderGroup.Use(middleware.AuthMiddleware())
+	{
+		orderGroup.POST("/submit", handler.SubmitOrder)
+	}
+
 	// 菜品路由组（对外）
 	dishesGroup := apiGroup.Group("/dish")
 	{
