@@ -9,7 +9,8 @@ import (
 
 func AddItemToCart(c *gin.Context) {
 	type request struct {
-		DishID uint `json:"dish_id" binding:"required"`
+		DishID        uint   `json:"dish_id" binding:"required"`
+		Specification string `json:"specification"`
 	}
 	var req request
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -21,7 +22,7 @@ func AddItemToCart(c *gin.Context) {
 	}
 	userID, _ := c.Get("user_id")
 
-	cartID, err := service.AddToCart(userID.(uint), req.DishID)
+	cartID, err := service.AddToCart(userID.(uint), req.DishID, req.Specification)
 	if err != nil {
 		Respond(c, http.StatusInternalServerError, 2, "添加详情失败", gin.H{"error": err.Error()})
 		return
@@ -32,8 +33,9 @@ func AddItemToCart(c *gin.Context) {
 
 func RemoveItemFromCart(c *gin.Context) {
 	type request struct {
-		CartID     uint `json:"cart_id" binding:"required"`
-		DishID uint `json:"dish_id" binding:"required"`
+		CartID        uint   `json:"cart_id" binding:"required"`
+		DishID        uint   `json:"dish_id" binding:"required"`
+		Specification string `json:"specification"`
 	}
 	var req request
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -41,7 +43,7 @@ func RemoveItemFromCart(c *gin.Context) {
 		return
 	}
 
-	err := service.RemoveDishFromCartItem(req.CartID, req.DishID)
+	err := service.RemoveDishFromCartItem(req.CartID, req.DishID, req.Specification)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

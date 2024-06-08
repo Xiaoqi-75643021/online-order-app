@@ -17,10 +17,13 @@ func FindOrderByID(orderID uint) (*model.Order, error) {
 	return order, err
 }
 
-func FindOrderByUserID(userID uint) (*model.Order, error) {
-	order := new(model.Order)
-	err := database.DB.Where("user_id = ?", userID).First(&order).Error
-	return order, err
+func  GetOrdersByUserID(userID uint) ([]model.Order, error) {
+	var orders []model.Order
+	err := database.DB.Where("user_id = ?", userID).Find(&orders).Error
+	if err != nil {
+		return nil, err
+	}
+	return orders, nil
 }
 
 func DeleteOrder(id uint) error {
@@ -74,7 +77,6 @@ func ConvertCartItemsToOrderItems(tx *gorm.DB, cartItems []*model.CartItem, orde
 			OrderID:  orderID,
 			DishID:   cartItem.DishID,
 			Quantity: cartItem.Quantity,
-			Note:     cartItem.Note,
 		}
 		if err := tx.Create(orderItem).Error; err != nil {
 			return err

@@ -6,7 +6,7 @@ import (
 	"online-ordering-app/internal/repository"
 )
 
-func SubmitOrder(cartID, userID uint, orderType string) error {
+func SubmitOrder(cartID, userID uint, orderType string) (*model.Order, error) {
 	tx := database.DB.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -17,31 +17,36 @@ func SubmitOrder(cartID, userID uint, orderType string) error {
 	cartItems, err := repository.ListCartItemsByCartID(cartID)
 	if err != nil {
 		tx.Rollback()
-		return err
+		return nil, err
 	}
 
 	order := &model.Order{
 		UserID:      userID,
 		TotalAmount: calculateTotalAmount(cartItems),
-		Status:      "未支付",
+		Status:      "已支付",
 		Type:        orderType,
 	}
 	if err := repository.CreateOrder(tx, order); err != nil {
 		tx.Rollback()
-		return err
+		return nil, err
 	}
 
 	if err := repository.ConvertCartItemsToOrderItems(tx, cartItems, order.OrderID); err != nil {
 		tx.Rollback()
-		return err
+		return nil, err
 	}
 
 	if err := repository.DeleteCart(tx, cartID); err != nil {
 		tx.Rollback()
-		return err
+		return nil, err
 	}
 
-	return tx.Commit().Error
+	return order, tx.Commit().Error
+}
+
+func QueryOrdersByUserID(userID uint) ([]model.Order, error) {
+	orders, err := repository.GetOrdersByUserID(userID)
+	return orders, err
 }
 
 func calculateTotalAmount(cartItems []*model.CartItem) float64 {

@@ -48,6 +48,7 @@ func SetupRouter() *gin.Engine {
 	orderGroup.Use(middleware.AuthMiddleware())
 	{
 		orderGroup.POST("/submit", handler.SubmitOrder)
+		orderGroup.POST("/list", handler.QueryOrders)
 	}
 
 	// 菜品路由组（对外）

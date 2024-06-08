@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func AddToCart(userID, dishID uint) (int, error) {
+func AddToCart(userID, dishID uint, specification string) (int, error) {
 	tx := database.DB.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -36,42 +36,53 @@ func AddToCart(userID, dishID uint) (int, error) {
 		return int(cart.CartID), err
 	}
 
-	cartItem, err := repository.FindCartItemByCartIDAndDishID(cart.CartID, dishID)
+	cartItems, err := repository.FindCartItemsByCartIDAndDishID(cart.CartID, dishID)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			cartItem = &model.CartItem{
-				CartID:   cart.CartID,
-				DishID:   dishID,
-				Quantity: 1,
-				Price:    dish.Price,
-			}
-			if err := repository.SaveCartItem(tx, cartItem); err != nil {
-				tx.Rollback()
-				return -1, err
-			}
-		} else {
-			tx.Rollback()
-			return int(cart.CartID), err
+		return int(cart.CartID), err
+	}
+	
+	var cartItem *model.CartItem
+	for _, item := range cartItems {
+		if item.Specification == specification {
+			cartItem = item
+		}
+	}
+
+	if cartItem == nil {
+		cartItem = &model.CartItem{
+			CartID:        cart.CartID,
+			DishID:        dishID,
+			Quantity:      1,
+			Price:         dish.Price,
+			Specification: specification,
 		}
 	} else {
 		cartItem.Quantity += 1
-		if err := repository.SaveCartItem(tx, cartItem); err != nil {
-			tx.Rollback()
-			return -1, err
-		}
+	}
+
+	if err := repository.SaveCartItem(tx, cartItem); err != nil {
+		tx.Rollback()
+		return -1, err
 	}
 
 	return int(cart.CartID), tx.Commit().Error
 }
 
-func RemoveDishFromCartItem(cartID, dishID uint) error {
+func RemoveDishFromCartItem(cartID, dishID uint, specification string) error {
 	cart, err := repository.FindCartByID(cartID)
 	if err != nil {
 		return err
 	}
 
-	cartItem, err := repository.FindCartItemByCartIDAndDishID(cartID, dishID); if err != nil {
+	cartItems, err := repository.FindCartItemsByCartIDAndDishID(cartID, dishID)
+	if err != nil {
 		return err
+	}
+	var cartItem *model.CartItem
+	for _, item := range cartItems {
+		if item.Specification == specification {
+			cartItem = item
+		}
 	}
 
 	if cartItem.Quantity == 1 {
@@ -103,7 +114,7 @@ func RemoveDishFromCartItem(cartID, dishID uint) error {
 
 func ClearCart(cartID uint) error {
 	tx := database.DB.Begin()
-	if err := repository.DeleteCart(tx, cartID); err !=nil {
+	if err := repository.DeleteCart(tx, cartID); err != nil {
 		tx.Rollback()
 		return err
 	}

@@ -23,7 +23,7 @@ func Init() *gorm.DB {
 	}
 
 	// 自动迁移模型
-	db.AutoMigrate(&model.User{}, &model.Dish{}, &model.Cart{}, &model.CartItem{}, &model.Category{}, &model.Coupon{}, &model.UserCoupon{})
+	db.AutoMigrate(&model.User{}, &model.Dish{}, &model.Cart{}, &model.CartItem{}, &model.Category{}, &model.Coupon{}, &model.UserCoupon{}, &model.Order{}, &model.OrderItem{})
 	return db
 }
 
