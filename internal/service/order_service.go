@@ -56,3 +56,11 @@ func calculateTotalAmount(cartItems []*model.CartItem) float64 {
 	}
 	return total
 }
+
+func QueryOrderItemsByOrderID(orderID uint) ([]*model.OrderItem, error) {
+	orderItems, err := repository.ListOrderItemsByOrderID(orderID)
+	if err != nil {
+		return nil, err
+	}
+	return orderItems, nil
+}

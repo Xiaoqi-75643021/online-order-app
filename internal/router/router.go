@@ -18,78 +18,89 @@ func SetupRouter() *gin.Engine {
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: false,
-		MaxAge: 12 * time.Hour,
+		MaxAge:           12 * time.Hour,
 	}))
 
 	r.Static("/assets", "./assets")
 
-	// 接口路由
+	// 小程序接口路由
 	apiGroup := r.Group("/api")
-
-	// 身份验证路由组
-	authGroup := apiGroup.Group("/auth")
 	{
-		authGroup.POST("/login", handler.Login)
-		authGroup.POST("/register", handler.Register)
-	}
 
-	// 应用小程序用户路由组
-	userGroup := apiGroup.Group("/user")
-	userGroup.Use(middleware.AuthMiddleware())
-	{
-		userGroup.PUT("/username", handler.UpdateUsername)
-		userGroup.PUT("/password", handler.UpdatePassword)
-		userGroup.POST("/recharge", handler.RechargeBalance)
-		userGroup.POST("/deduct", handler.DeductBalance)
-	}
+		// 身份验证路由组
+		authGroup := apiGroup.Group("/auth")
+		{
+			authGroup.POST("/login", handler.Login)
+			authGroup.POST("/register", handler.Register)
+		}
 
-	// 订单路由组（对外）
-	orderGroup := apiGroup.Group("/order")
-	orderGroup.Use(middleware.AuthMiddleware())
-	{
-		orderGroup.POST("/submit", handler.SubmitOrder)
-		orderGroup.POST("/list", handler.QueryOrders)
-	}
+		// 用户路由组(小程序)
+		userGroup := apiGroup.Group("/user")
+		userGroup.Use(middleware.AuthMiddleware())
+		{
+			userGroup.PUT("/username", handler.UpdateUsername)
+			userGroup.PUT("/password", handler.UpdatePassword)
+			userGroup.POST("/recharge", handler.RechargeBalance)
+			userGroup.POST("/deduct", handler.DeductBalance)
+		}
 
-	// 菜品路由组（对外）
-	dishesGroup := apiGroup.Group("/dish")
-	{
-		dishesGroup.GET("/list", handler.GetAllDishes)
-		dishesGroup.GET("/search", handler.QueryDishInfoByKeyword)
-		dishesGroup.GET("/category", handler.GetDishesByCategory)
-		dishesGroup.GET("/popular", handler.GetPopularDishes)
-		dishesGroup.GET("/info", handler.QueryDishInfoById)
-		dishesGroup.GET("/image", handler.QueryDishImageById)
-	}
+		// 订单路由组（小程序）
+		orderGroup := apiGroup.Group("/order")
+		orderGroup.Use(middleware.AuthMiddleware())
+		{
+			orderGroup.POST("/submit", handler.SubmitOrder)
+			orderGroup.POST("/list", handler.QueryOrders)
+			orderGroup.POST("/items", handler.QueryOrderItemsByOrderID)
+		}
 
-	// 分类路由组（对外）
-	categoryGroup := apiGroup.Group("/category")
-	{
-		categoryGroup.GET("/list", handler.GetAllCategories)
-	}
+		// 菜品路由组（小程序）
+		dishesGroup := apiGroup.Group("/dish")
+		{
+			dishesGroup.GET("/list", handler.GetAllDishes)
+			dishesGroup.GET("/search", handler.QueryDishInfoByKeyword)
+			dishesGroup.GET("/category", handler.GetDishesByCategory)
+			dishesGroup.GET("/popular", handler.GetPopularDishes)
+			dishesGroup.GET("/info", handler.QueryDishInfoById)
+			dishesGroup.GET("/image", handler.QueryDishImageById)
+		}
 
-	// 购物车路由组
-	cartGroup := apiGroup.Group("/cart")
-	cartGroup.Use(middleware.AuthMiddleware())
-	{
-		cartGroup.POST("/add", handler.AddItemToCart)
-		cartGroup.DELETE("/delete", handler.RemoveItemFromCart)
-		cartGroup.DELETE("/clear", handler.ClearCart)
+		// 分类路由组（小程序）
+		categoryGroup := apiGroup.Group("/category")
+		{
+			categoryGroup.GET("/list", handler.GetAllCategories)
+		}
 
-		cartGroup.GET("/info", handler.GetCartInfo)
+		// 购物车路由组(小程序)
+		cartGroup := apiGroup.Group("/cart")
+		cartGroup.Use(middleware.AuthMiddleware())
+		{
+			cartGroup.POST("/add", handler.AddItemToCart)
+			cartGroup.DELETE("/delete", handler.RemoveItemFromCart)
+			cartGroup.DELETE("/clear", handler.ClearCart)
+
+			cartGroup.GET("/info", handler.GetCartInfo)
+		}
 	}
 
 	// 管理员路由组
-	adminGroup := apiGroup.Group("/admin")
+	adminGroup := r.Group("/admin")
+	
 	adminGroup.Use(middleware.AuthMiddleware())
+	adminAuthGroup := adminGroup.Group("/auth")
+	{
+		adminAuthGroup.POST("/login", handler.Login)
+		adminAuthGroup.POST("/register", handler.Register)
+	}
+
 	adminGroup.Use(middleware.AdminAuthMiddleware())
 	{
-		// 管理员对菜品的增删改操作
+		// 管理员对菜品的增删改查操作
 		adminDishesGroup := adminGroup.Group("/dish")
 		{
 			adminDishesGroup.POST("/add", handler.AddDish)
 			adminDishesGroup.DELETE("/delete", handler.RemoveDish)
 			adminDishesGroup.PUT("/update", handler.UpdateDish)
+			adminDishesGroup.POST("/list", handler.GetAllDishes)
 		}
 
 		// 管理员对分类的增删改操作
