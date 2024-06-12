@@ -17,7 +17,7 @@ func FindOrderByID(orderID uint) (*model.Order, error) {
 	return order, err
 }
 
-func  GetOrdersByUserID(userID uint) ([]model.Order, error) {
+func GetOrdersByUserID(userID uint) ([]model.Order, error) {
 	var orders []model.Order
 	err := database.DB.Where("user_id = ?", userID).Find(&orders).Error
 	if err != nil {
@@ -40,6 +40,10 @@ func DeleteOrder(id uint) error {
 	}
 
 	return tx.Commit().Error
+}
+
+func SaveOrder(order *model.Order) error {
+	return database.DB.Save(order).Error
 }
 
 func SaveOrderItem(orderItem *model.OrderItem) error {

@@ -8,6 +8,8 @@ type Order struct {
 	TotalAmount float64 `gorm:"column:total_amount;type:decimal(10,2)"` // 总金额
 	Status      string  `gorm:"column:status;type:varchar(50)"`         // 未支付，制作中，已备好，完成
 	Type        string  `gorm:"column:type;type:varchar(50)"`           // 堂食or外带
+	Note        string  `gorm:"column:note;type:text"`                  // 备注
+	Comment     string  `gorm:"column:comment;type:text"`               // 评论
 	gorm.Model
 }
 
@@ -16,10 +18,10 @@ func (*Order) TableName() string {
 }
 
 type OrderItem struct {
-	OrderItemID uint   `gorm:"column:id;primaryKey;autoIncrement"` // 订单项ID
-	OrderID     uint   `gorm:"column:order_id;index"`              // 订单ID
-	DishID      uint   `gorm:"column:dish_id;index"`               // 菜品ID，索引
-	Quantity    int    `gorm:"column:quantity;type:int"`           // 菜品数量
+	OrderItemID uint `gorm:"column:id;primaryKey;autoIncrement"` // 订单项ID
+	OrderID     uint `gorm:"column:order_id;index"`              // 订单ID
+	DishID      uint `gorm:"column:dish_id;index"`               // 菜品ID，索引
+	Quantity    int  `gorm:"column:quantity;type:int"`           // 菜品数量
 }
 
 func (*OrderItem) TableName() string {

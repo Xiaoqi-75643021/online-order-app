@@ -1,6 +1,7 @@
 package service
 
 import (
+	"online-ordering-app/internal/model"
 	"online-ordering-app/internal/repository"
 	"online-ordering-app/internal/utils"
 )
@@ -48,4 +49,12 @@ func DeductUserBalance(userID uint, amount float64) error {
 	user.Balance -= amount
 
 	return repository.UpdateUser(user)
+}
+
+func QueryUserInfoByID(userID uint) (*model.User, error) {
+	user, err := repository.FindUserByID(userID)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }

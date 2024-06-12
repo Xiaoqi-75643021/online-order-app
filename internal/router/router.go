@@ -42,6 +42,7 @@ func SetupRouter() *gin.Engine {
 			userGroup.PUT("/password", handler.UpdatePassword)
 			userGroup.POST("/recharge", handler.RechargeBalance)
 			userGroup.POST("/deduct", handler.DeductBalance)
+			userGroup.POST("/info", handler.QueryUserInfoByID)
 		}
 
 		// 订单路由组（小程序）
@@ -51,6 +52,10 @@ func SetupRouter() *gin.Engine {
 			orderGroup.POST("/submit", handler.SubmitOrder)
 			orderGroup.POST("/list", handler.QueryOrders)
 			orderGroup.POST("/items", handler.QueryOrderItemsByOrderID)
+			orderGroup.POST("/delete", handler.RemoveOrder)
+			orderGroup.POST("/refund_request", handler.SubmitRefundRequestByOrderID)
+			orderGroup.POST("/refund", handler.RefundByOrderID)
+			orderGroup.POST("/comment", handler.SubmitCommentByOrderID)
 		}
 
 		// 菜品路由组（小程序）
@@ -84,7 +89,7 @@ func SetupRouter() *gin.Engine {
 
 	// 管理员路由组
 	adminGroup := r.Group("/admin")
-	
+
 	adminGroup.Use(middleware.AuthMiddleware())
 	adminAuthGroup := adminGroup.Group("/auth")
 	{

@@ -41,10 +41,10 @@ func UpdateCartItem(cartItem *model.CartItem) error {
 	return database.DB.Save(cartItem).Error
 }
 
-func FindCartItemsByCartIDAndDishID(cartID, dishID uint) ([]*model.CartItem, error) {
-	var cartItems []*model.CartItem
-	err := database.DB.Where("cart_id = ? and dish_id = ?", cartID, dishID).Find(&cartItems).Error
-	return cartItems, err
+func FindCartItemByCartIDAndDishID(cartID, dishID uint) (*model.CartItem, error) {
+	var cartItem *model.CartItem
+	err := database.DB.Where("cart_id = ? and dish_id = ?", cartID, dishID).First(&cartItem).Error
+	return cartItem, err
 }
 
 func DeleteCartItem(cartItemID uint) error {

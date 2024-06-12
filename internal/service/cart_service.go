@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func AddToCart(userID, dishID uint, specification string) (int, error) {
+func AddToCart(userID, dishID uint) (int, error) {
 	tx := database.DB.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -35,26 +35,19 @@ func AddToCart(userID, dishID uint, specification string) (int, error) {
 		tx.Rollback()
 		return int(cart.CartID), err
 	}
-
-	cartItems, err := repository.FindCartItemsByCartIDAndDishID(cart.CartID, dishID)
+	
+	cartItem, err := repository.FindCartItemByCartIDAndDishID(cart.CartID, dishID)
 	if err != nil {
+		tx.Rollback()
 		return int(cart.CartID), err
 	}
 	
-	var cartItem *model.CartItem
-	for _, item := range cartItems {
-		if item.Specification == specification {
-			cartItem = item
-		}
-	}
-
 	if cartItem == nil {
 		cartItem = &model.CartItem{
 			CartID:        cart.CartID,
 			DishID:        dishID,
 			Quantity:      1,
 			Price:         dish.Price,
-			Specification: specification,
 		}
 	} else {
 		cartItem.Quantity += 1
@@ -74,15 +67,9 @@ func RemoveDishFromCartItem(cartID, dishID uint, specification string) error {
 		return err
 	}
 
-	cartItems, err := repository.FindCartItemsByCartIDAndDishID(cartID, dishID)
+	cartItem, err := repository.FindCartItemByCartIDAndDishID(cartID, dishID)
 	if err != nil {
 		return err
-	}
-	var cartItem *model.CartItem
-	for _, item := range cartItems {
-		if item.Specification == specification {
-			cartItem = item
-		}
 	}
 
 	if cartItem.Quantity == 1 {

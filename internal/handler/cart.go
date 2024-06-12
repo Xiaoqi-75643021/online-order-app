@@ -10,7 +10,6 @@ import (
 func AddItemToCart(c *gin.Context) {
 	type request struct {
 		DishID        uint   `json:"dish_id" binding:"required"`
-		Specification string `json:"specification"`
 	}
 	var req request
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -22,7 +21,7 @@ func AddItemToCart(c *gin.Context) {
 	}
 	userID, _ := c.Get("user_id")
 
-	cartID, err := service.AddToCart(userID.(uint), req.DishID, req.Specification)
+	cartID, err := service.AddToCart(userID.(uint), req.DishID)
 	if err != nil {
 		Respond(c, http.StatusInternalServerError, 2, "添加详情失败", gin.H{"error": err.Error()})
 		return

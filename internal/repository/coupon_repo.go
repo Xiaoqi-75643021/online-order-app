@@ -15,6 +15,12 @@ func FindCouponByID(couponID uint) (*model.Coupon, error) {
 	return coupon, err
 }
 
+func FindCouponByName(name string) (*model.Coupon, error) {
+	coupon := new(model.Coupon)
+	err := database.DB.Where("name = ?", name).First(&coupon).Error
+	return coupon, err
+}
+
 func UpdateCoupon(coupon *model.Coupon) error {
 	return database.DB.Save(coupon).Error
 }
@@ -39,9 +45,15 @@ func FindUserCouponByID(userCouponID uint) (*model.UserCoupon, error) {
 	return userCoupon, err
 }
 
-func FindUserCouponsByUserID(userID uint) ([]*model.UserCoupon, error) {
+func FindUserCouponsByUserID(userID uint, page, pageSize int) ([]*model.UserCoupon, error) {
 	var userCoupons []*model.UserCoupon
-	err := database.DB.Where("user_id = ?", userID).Find(&userCoupons).Error
+	err := database.DB.Where("user_id = ?", userID).Offset((page - 1) * pageSize).Limit(pageSize).Find(&userCoupons).Error
+	return userCoupons, err
+}
+
+func FindUserCouponsByCartID(cartID uint) ([]*model.UserCoupon, error) {
+	var userCoupons []*model.UserCoupon
+	err := database.DB.Where("user_id = ?", cartID).Find(&userCoupons).Error
 	return userCoupons, err
 }
 
