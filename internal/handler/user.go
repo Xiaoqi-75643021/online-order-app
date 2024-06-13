@@ -108,3 +108,24 @@ func QueryUserInfoByID(c *gin.Context) {
 		"user": user,
 	})
 }
+
+func QueryAllUsers(c *gin.Context) {
+	users, err := service.QueryAllUsers()
+	if err != nil {
+		Respond(c, http.StatusInternalServerError, 2, "获取用户列表失败", gin.H{"error": err.Error()})
+		return
+	}
+
+	Respond(c, http.StatusOK, 0, "获取用户列表成功", gin.H{
+		"users": users,
+	})
+}
+
+func DeleteUser(c *gin.Context) {
+	userID, _ := c.Get("user_id")
+	if err := service.DeleteUser(userID.(uint)); err != nil {
+		Respond(c, http.StatusInternalServerError, 2, "删除用户失败", gin.H{"error": err.Error()})
+		return
+	}
+	Respond(c, http.StatusOK, 0, "删除用户成功", nil)
+}

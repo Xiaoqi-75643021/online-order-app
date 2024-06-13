@@ -58,3 +58,11 @@ func QueryUserInfoByID(userID uint) (*model.User, error) {
 	}
 	return user, nil
 }
+
+func QueryAllUsers() ([]*model.User, error) {
+	return repository.FindAllUsers()
+}
+
+func DeleteUser(userID uint) error {
+	return repository.DeleteUser(userID)
+}

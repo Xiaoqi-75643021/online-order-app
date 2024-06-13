@@ -117,12 +117,20 @@ func SetupRouter() *gin.Engine {
 			adminCategoryGroup.POST("/info", handler.QueryCategoryByID)
 		}
 
+		// 管理员-订单
 		adminOrderGroup := adminGroup.Group("/order")
 		{
 			adminOrderGroup.POST("/list", handler.QueryAllOrders)
 			adminOrderGroup.POST("/finish", handler.FinishOrder)
 			adminOrderGroup.POST("/delete", handler.RemoveOrder)
 			adminOrderGroup.POST("/refund", handler.RefundByOrderID)
+		}
+
+		// 管理员-用户
+		adminUserGroup := adminGroup.Group("/user")
+		{
+			adminUserGroup.POST("/list", handler.QueryAllUsers)
+			adminUserGroup.POST("/delete", handler.DeleteUser)
 		}
 	}
 

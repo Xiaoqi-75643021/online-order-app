@@ -32,6 +32,12 @@ func DeleteUser(id uint) error {
 	return database.DB.Delete(&model.User{}, id).Error
 }
 
+func FindAllUsers() ([]*model.User, error) {
+	var users []*model.User
+	err := database.DB.Find(&users).Error
+	return users, err
+}
+
 func ListUsers(page, pageSize int) ([]*model.User, error) {
 	var users []*model.User
 	err := database.DB.Offset((page-1)*pageSize).Limit(pageSize).
