@@ -35,31 +35,35 @@ func AddToCart(userID, dishID uint) (int, error) {
 		tx.Rollback()
 		return int(cart.CartID), err
 	}
-	
+
 	cartItem, err := repository.FindCartItemByCartIDAndDishID(cart.CartID, dishID)
 	if err != nil {
-		tx.Rollback()
-		return int(cart.CartID), err
-	}
-	
-	if cartItem == nil {
-		cartItem = &model.CartItem{
-			CartID:        cart.CartID,
-			DishID:        dishID,
-			Quantity:      1,
-			Price:         dish.Price,
+		if err == gorm.ErrRecordNotFound {
+			cartItem = &model.CartItem{
+				CartID:   cart.CartID,
+				DishID:   dishID,
+				Quantity: 1,
+				Price:    dish.Price,
+			}
+			if err := repository.SaveCartItem(tx, cartItem); err != nil {
+				tx.Rollback()
+				return -1, err
+			}
+		} else {
+			tx.Rollback()
+			return int(cart.CartID), err
 		}
 	} else {
 		cartItem.Quantity += 1
-	}
-
-	if err := repository.SaveCartItem(tx, cartItem); err != nil {
-		tx.Rollback()
-		return -1, err
+		if err := repository.SaveCartItem(tx, cartItem); err != nil {
+			tx.Rollback()
+			return -1, err
+		}
 	}
 
 	return int(cart.CartID), tx.Commit().Error
 }
+
 
 func RemoveDishFromCartItem(cartID, dishID uint, specification string) error {
 	cart, err := repository.FindCartByID(cartID)

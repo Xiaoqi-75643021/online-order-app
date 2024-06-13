@@ -9,7 +9,7 @@ import (
 
 func AddItemToCart(c *gin.Context) {
 	type request struct {
-		DishID        uint   `json:"dish_id" binding:"required"`
+		DishID uint `json:"dish_id" binding:"required"`
 	}
 	var req request
 	if err := c.ShouldBindJSON(&req); err != nil {

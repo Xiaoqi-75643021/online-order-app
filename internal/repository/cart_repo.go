@@ -42,7 +42,7 @@ func UpdateCartItem(cartItem *model.CartItem) error {
 }
 
 func FindCartItemByCartIDAndDishID(cartID, dishID uint) (*model.CartItem, error) {
-	var cartItem *model.CartItem
+	cartItem := new(model.CartItem)
 	err := database.DB.Where("cart_id = ? and dish_id = ?", cartID, dishID).First(&cartItem).Error
 	return cartItem, err
 }

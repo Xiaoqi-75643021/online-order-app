@@ -53,6 +53,7 @@ func SetupRouter() *gin.Engine {
 			orderGroup.POST("/items", handler.QueryOrderItemsByOrderID)
 			orderGroup.POST("/refund_request", handler.SubmitRefundRequestByOrderID)
 			orderGroup.POST("/comment", handler.SubmitCommentByOrderID)
+			orderGroup.POST("/delete", handler.RemoveOrder)
 		}
 
 		// 菜品路由组（小程序）
