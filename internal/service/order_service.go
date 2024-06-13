@@ -144,3 +144,25 @@ func SubmitCommentByOrderID(orderID uint, comment string) error {
 
 	return nil
 }
+
+func FinishOrder(orderID uint) error {
+	order, err := repository.FindOrderByID(orderID)
+	if err != nil {
+		return err
+	}
+	order.Status = "已完成"
+	if err := repository.SaveOrder(order); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func QueryAllOrders() ([]model.Order, error) {
+	orders, err := repository.GetAllOrders()
+	if err != nil {
+		return nil, err
+	}
+
+	return orders, nil
+}

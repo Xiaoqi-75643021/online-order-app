@@ -26,7 +26,6 @@ func SetupRouter() *gin.Engine {
 	// 小程序接口路由
 	apiGroup := r.Group("/api")
 	{
-
 		// 身份验证路由组
 		authGroup := apiGroup.Group("/auth")
 		{
@@ -50,11 +49,9 @@ func SetupRouter() *gin.Engine {
 		orderGroup.Use(middleware.AuthMiddleware())
 		{
 			orderGroup.POST("/submit", handler.SubmitOrder)
-			orderGroup.POST("/list", handler.QueryOrders)
+			orderGroup.POST("/list", handler.QueryOrdersByUserID)
 			orderGroup.POST("/items", handler.QueryOrderItemsByOrderID)
-			orderGroup.POST("/delete", handler.RemoveOrder)
 			orderGroup.POST("/refund_request", handler.SubmitRefundRequestByOrderID)
-			orderGroup.POST("/refund", handler.RefundByOrderID)
 			orderGroup.POST("/comment", handler.SubmitCommentByOrderID)
 		}
 
@@ -62,11 +59,10 @@ func SetupRouter() *gin.Engine {
 		dishesGroup := apiGroup.Group("/dish")
 		{
 			dishesGroup.GET("/list", handler.GetAllDishes)
-			dishesGroup.GET("/search", handler.QueryDishInfoByKeyword)
-			dishesGroup.GET("/category", handler.GetDishesByCategory)
 			dishesGroup.GET("/popular", handler.GetPopularDishes)
 			dishesGroup.GET("/info", handler.QueryDishInfoById)
 			dishesGroup.GET("/image", handler.QueryDishImageById)
+			dishesGroup.GET("/category", handler.GetDishesByCategory)
 		}
 
 		// 分类路由组（小程序）
@@ -90,29 +86,42 @@ func SetupRouter() *gin.Engine {
 	// 管理员路由组
 	adminGroup := r.Group("/admin")
 
-	adminGroup.Use(middleware.AuthMiddleware())
 	adminAuthGroup := adminGroup.Group("/auth")
 	{
 		adminAuthGroup.POST("/login", handler.Login)
 		adminAuthGroup.POST("/register", handler.Register)
 	}
 
+	adminGroup.Use(middleware.AuthMiddleware())
 	adminGroup.Use(middleware.AdminAuthMiddleware())
 	{
-		// 管理员对菜品的增删改查操作
+		// 管理员-菜品
 		adminDishesGroup := adminGroup.Group("/dish")
 		{
 			adminDishesGroup.POST("/add", handler.AddDish)
 			adminDishesGroup.DELETE("/delete", handler.RemoveDish)
 			adminDishesGroup.PUT("/update", handler.UpdateDish)
 			adminDishesGroup.POST("/list", handler.GetAllDishes)
+
+			adminDishesGroup.GET("/search", handler.QueryDishInfoByKeyword)
+			adminDishesGroup.GET("/category", handler.GetDishesByCategory)
 		}
 
-		// 管理员对分类的增删改操作
+		// 管理员-分类
 		adminCategoryGroup := adminGroup.Group("/category")
 		{
 			adminCategoryGroup.POST("/add", handler.AddCategory)
 			adminCategoryGroup.DELETE("/delete", handler.RemoveCategory)
+			adminCategoryGroup.POST("/list", handler.GetAllCategories)
+			adminCategoryGroup.POST("/info", handler.QueryCategoryByID)
+		}
+
+		adminOrderGroup := adminGroup.Group("/order")
+		{
+			adminOrderGroup.POST("/list", handler.QueryAllOrders)
+			adminOrderGroup.POST("/finish", handler.FinishOrder)
+			adminOrderGroup.POST("/delete", handler.RemoveOrder)
+			adminOrderGroup.POST("/refund", handler.RefundByOrderID)
 		}
 	}
 

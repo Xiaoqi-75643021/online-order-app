@@ -88,3 +88,12 @@ func ConvertCartItemsToOrderItems(tx *gorm.DB, cartItems []*model.CartItem, orde
 	}
 	return nil
 }
+
+func GetAllOrders() ([]model.Order, error) {
+	var orders []model.Order
+	err := database.DB.Find(&orders).Error
+	if err != nil {
+		return nil, err
+	}
+	return orders, nil
+}

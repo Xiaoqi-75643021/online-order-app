@@ -58,3 +58,22 @@ func GetAllCategories(c *gin.Context) {
 
 	Respond(c, http.StatusOK, 0, "分类获取成功", gin.H{"categories": categories})
 }
+
+func QueryCategoryByID(c *gin.Context) {
+	type request struct {
+		ID uint `json:"category_id" binding:"required"`
+	}
+	var req request
+	if err := c.ShouldBindJSON(&req); err != nil {
+		Respond(c, http.StatusBadRequest, 1, "请求参数错误", gin.H{"error": err.Error()})
+		return
+	}
+
+	category, err := service.QueryCategoryByID(req.ID)
+	if err != nil {
+		Respond(c, http.StatusInternalServerError, 2, "获取分类详情失败", gin.H{"error": err.Error()})
+		return
+	}
+
+	Respond(c, http.StatusOK, 0, "获取分类详情成功", gin.H{"category": category})
+}

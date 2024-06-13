@@ -31,10 +31,20 @@ func SubmitOrder(c *gin.Context) {
 	Respond(c, http.StatusOK, 0, "提交订单成功", gin.H{"order": order})
 }
 
-func QueryOrders(c *gin.Context) {
+func QueryOrdersByUserID(c *gin.Context) {
 	userID, _ := c.Get("user_id")
 
 	orders, err := service.QueryOrdersByUserID(userID.(uint))
+	if err != nil {
+		Respond(c, http.StatusInternalServerError, 2, "获取用户订单列表失败", gin.H{"error": err.Error()})
+		return
+	}
+
+	Respond(c, http.StatusOK, 0, "获取用户订单列表成功", gin.H{"orders": orders})
+}
+
+func QueryAllOrders(c *gin.Context) {
+	orders, err := service.QueryAllOrders()
 	if err != nil {
 		Respond(c, http.StatusInternalServerError, 2, "获取订单列表失败", gin.H{"error": err.Error()})
 		return
@@ -143,4 +153,24 @@ func SubmitCommentByOrderID(c *gin.Context) {
 	}
 
 	Respond(c, http.StatusOK, 0, "订单评论成功", nil)
+}
+
+func FinishOrder(c *gin.Context) {
+	type request struct {
+		OrderID uint   `json:"order_id" binding:"required"`
+	}
+
+	var req request
+	if err := c.ShouldBindJSON(&req); err != nil {
+		Respond(c, http.StatusBadRequest, 1, "请求参数错误", gin.H{"error": err.Error()})
+		return
+	}
+
+	err := service.FinishOrder(req.OrderID)
+	if err != nil {
+		Respond(c, http.StatusInternalServerError, 2, "订单完成失败", gin.H{"error": err.Error()})
+		return
+	}
+
+	Respond(c, http.StatusOK, 0, "订单完成成功", nil)
 }

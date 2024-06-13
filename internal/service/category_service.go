@@ -24,3 +24,7 @@ func RemoveCategory(categoryID uint) error {
 func ListCategories(page, pageSize int) ([]*model.Category, error) {
 	return repository.ListCategories(page, pageSize)
 }
+
+func QueryCategoryByID(categoryID uint) (*model.Category, error) {
+	return repository.FindCategoryByID(categoryID)
+}
