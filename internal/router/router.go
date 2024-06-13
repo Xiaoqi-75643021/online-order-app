@@ -64,6 +64,7 @@ func SetupRouter() *gin.Engine {
 			dishesGroup.GET("/info", handler.QueryDishInfoById)
 			dishesGroup.GET("/image", handler.QueryDishImageById)
 			dishesGroup.GET("/category", handler.GetDishesByCategory)
+			dishesGroup.GET("/search", handler.QueryDishInfoByKeyword)
 		}
 
 		// 分类路由组（小程序）
